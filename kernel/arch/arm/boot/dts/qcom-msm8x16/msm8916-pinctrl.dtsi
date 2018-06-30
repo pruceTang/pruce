@@ -1,0 +1,221 @@
+
+
+&soc {
+	tlmm_pinmux: pinctrl@1000000 {
+		compatible = "qcom,msm-tlmm-8916";
+		reg = <0x1000000 0x300000>;
+		interrupts = <0 208 0>;
+
+		/*General purpose pins*/
+		gp: gp {
+			qcom,num-pins = <122>;
+			#qcom,pin-cells = <1>;
+			msm_gpio: msm_gpio {
+				compatible = "qcom,msm-tlmm-gp";
+				gpio-controller;
+				#gpio-cells = <2>;
+				interrupt-controller;
+				#interrupt-cells = <2>;
+				num_irqs = <122>;
+			};
+		};
+
+
+ 		spi0_active {
+			/* MOSI, MISO, CLK */
+			qcom,pins = <&gp 0>, <&gp 1>, <&gp 3>;
+			qcom,num-grp-pins = <3>;
+			qcom,pin-func = <1>;
+			label = "spi0-active";
+			/* active state */
+			spi0_default: spi0_default {
+				drive-strength = <12>; /* 12 MA */
+				bias-disable = <0>; /* No PULL */
+			};
+		};
+
+		spi0_suspend {
+			/* MOSI, MISO, CLK */
+			qcom,pins = <&gp 0>, <&gp 1>, <&gp 3>;
+			qcom,num-grp-pins = <3>;
+			qcom,pin-func = <0>;
+			label = "spi0-suspend";
+			/* suspended state */
+			spi0_sleep: spi0_sleep {
+				drive-strength = <2>; /* 2 MA */
+				bias-pull-down; /* pull down */
+			};
+		};
+		spi0_cs0_active {
+			/* CS */
+			qcom,pins = <&gp 2>;
+			qcom,num-grp-pins = <1>;
+			qcom,pin-func = <1>;
+			label = "spi0-cs0-active";
+			spi0_cs0_active: cs0_active {
+				drive-strength = <12>;
+				bias-pull-up;
+			};
+		};
+
+		spi0_cs0_suspend {
+			/* CS */
+			qcom,pins = <&gp 2>;
+			qcom,num-grp-pins = <1>;
+			qcom,pin-func = <0>;
+			label = "spi0-cs0-suspend";
+			spi0_cs0_sleep: cs0_sleep {
+				drive-strength = <2>;
+				bias-disable = <0>;
+			};
+		};
+
+
+		pmx_qdsd_clk {
+			qcom,pins = <&qdsd 0>;
+			qcom,num-grp-pins = <1>;
+			label = "qdsd-clk";
+			qdsd_clk_sdcard: clk_sdcard {
+				bias-disable; /* NO pull */
+				drive-strength = <7>; /* 7 MA */
+			};
+			qdsd_clk_trace: clk_trace {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_clk_swdtrc: clk_swdtrc {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_clk_spmi: clk_spmi {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+		};
+
+		pmx_qdsd_cmd {
+			qcom,pins = <&qdsd 1>;
+			qcom,num-grp-pins = <1>;
+			label = "qdsd-cmd";
+			qdsd_cmd_sdcard: cmd_sdcard {
+				bias-pull-down; /* pull down */
+				drive-strength = <3>; /* 3 MA */
+			};
+			qdsd_cmd_trace: cmd_trace {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_cmd_swduart: cmd_uart {
+				bias-pull-up; /* pull up */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_cmd_swdtrc: cmd_swdtrc {
+				bias-pull-up; /* pull up */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_cmd_jtag: cmd_jtag {
+				bias-disable; /* NO pull */
+				drive-strength = <3>; /* 3 MA */
+			};
+			qdsd_cmd_spmi: cmd_spmi {
+				bias-pull-down; /* pull down */
+				drive-strength = <4>; /* 4 MA */
+			};
+		};
+
+		pmx_qdsd_data0 {
+			qcom,pins = <&qdsd 2>;
+			qcom,num-grp-pins = <1>;
+			label = "qdsd-data0";
+			qdsd_data0_sdcard: data0_sdcard {
+				bias-pull-down; /* pull down */
+				drive-strength = <3>; /* 3 MA */
+			};
+			qdsd_data0_trace: data0_trace {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_data0_swduart: data0_uart {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_data0_swdtrc: data0_swdtrc {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_data0_jtag: data0_jtag {
+				bias-pull-up; /* pull up */
+				drive-strength = <0>; /* 0 MA */
+			};
+			qdsd_data0_spmi: data0_spmi {
+				bias-pull-down; /* pull down */
+				drive-strength = <0>; /* 0 MA */
+			};
+		};
+
+
+		/* add pingrp for silead fingerprint */
+		pmx_silfp_int_active {
+			qcom,pins = <&gp 54>;
+			qcom,pin-func = <0>;
+			qcom,num-grp-pins = <1>;
+			label = "pmx_silfp_int_active";
+
+			silfp_int_active: silfp_int_active {
+				drive-strength = <8>;
+				//bias-pull-up;
+				bias-disable;
+			};
+		};
+
+		pmx_silfp_int_suspend {
+			qcom,pins = <&gp 54>;
+			qcom,pin-func = <0>;
+			qcom,num-grp-pins = <1>;
+			label = "pmx_silfp_int_suspend";
+
+			silfp_int_suspend: silfp_int_suspend {
+				drive-strength = <2>;
+				//bias-pull-down;
+				bias-disable;
+			};
+		};
+
+		pmx_silfp_reset_active {
+			qcom,pins = <&gp 60>;
+			qcom,pin-func = <0>;
+			qcom,num-grp-pins = <1>;
+			label = "pmx_silfp_reset_active";
+
+			silfp_reset_active: silfp_reset_active {
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+
+		pmx_silfp_reset_suspend {
+			qcom,pins = <&gp 60>;
+			qcom,pin-func = <0>;
+			qcom,num-grp-pins = <1>;
+			label = "pmx_silfp_reset_suspend";
+
+			silfp_reset_suspend: silfp_reset_suspend {
+				drive-strength = <8>;
+				bias-pull-up;
+			};
+		};
+
+		pmx_silfp_release {
+			qcom,pins = <&gp 54>, <&gp 60>;
+			qcom,num-grp-pins = <2>;
+			label = "pmx_silfp_release";
+
+			silfp_release: silfp_release {
+				drive-strength = <2>;
+				bias-pull-down;
+			};
+		};
+		
+
+		
+};

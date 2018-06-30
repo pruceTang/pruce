@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+
+&soc {
+	//spi@78b5000 {
+	//spi@7af7000 {
+	//spi@7af5000 {
+	spi@78b6000 {
+		status = "okay";
+		spidev@0x00 {
+		    compatible = "rohm,dh2228fv";
+		    spi-max-frequency = <10000000>;
+		    reg = <0>;
+		};
+	};
+	silead_fp {
+		status = "okay";
+		compatible = "sil,silead_fp";
+		spi-max-frequency = <4800000>;
+		qcom,qup-id = <2>;
+		reg = <0>;
+
+		interrupt-parent = <&tlmm>;
+		interrupts = <62 0x2008>;
+		avdd-supply =<&pm8937_l10>;
+		vddio-supply =<&pm8937_l6>;
+		rst-gpios = <&tlmm 61 0x0>;
+		irq-gpios = <&tlmm 62 0x2008>;
+		/*avdd-gpios = <&tlmm 47 0x1>;
+		vddio-gpios = <&tlmm 46 0x1>;*/
+	};
+}; 

@@ -1,0 +1,2 @@
+obj-$(CONFIG_SILEAD_FP)		+= silead/
+obj-$(CONFIG_SILEAD_FP_PLATFORM)		+= silead/

@@ -1,0 +1,29 @@
+
+&soc{
+	silead_fp {
+		status = "okay";
+		compatible = "sil,silead_fp";
+		spi-max-frequency = <4800000>;
+		qcom,qup-id = <5>;
+		reg = <0>;
+
+		interrupt-parent = <&tlmm>;
+		interrupts = <83 0x2008>;
+		avdd-supply =<&pm660_l19>;
+		vddio-supply =<&pm660_l11>;
+		rst-gpios = <&tlmm 84 0x0>;
+		irq-gpios = <&tlmm 83 0x2008>;
+		/*avdd-gpios = <&tlmm 51 0x1>;
+		vddio-gpios = <&tlmm 46 0x1>;*/
+	};
+
+};
+
+&spi_5 {
+		status = "disabled";
+		spidev@0x00 {
+		    compatible = "rohm,dh2228fv";
+		    spi-max-frequency = <10000000>;
+		    reg = <0>;
+		};
+};

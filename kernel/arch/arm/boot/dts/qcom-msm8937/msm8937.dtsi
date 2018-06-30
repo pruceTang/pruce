@@ -1,0 +1,166 @@
+&soc {
+	blsp1_uart1: serial@78af000 {
+		compatible = "qcom,msm-lsuart-v14";
+		reg = <0x78af000 0x200>;
+		interrupts = <0 107 0>;
+		clocks = <&clock_gcc clk_gcc_blsp1_uart1_apps_clk>,
+		<&clock_gcc clk_gcc_blsp1_ahb_clk>;
+		clock-names = "core_clk", "iface_clk";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmx_blsp1_uart1_active>;
+		status = "ok";
+	};
+
+	blsp1_uart2: serial@78b0000 {
+		compatible = "qcom,msm-lsuart-v14";
+		reg = <0x78b0000 0x200>;
+		interrupts = <0 108 0>;
+		status = "disabled";
+		clocks = <&clock_gcc clk_gcc_blsp1_uart2_apps_clk>,
+		<&clock_gcc clk_gcc_blsp1_ahb_clk>;
+		clock-names = "core_clk", "iface_clk";
+	};
+
+	spi_1: spi@78b5000 { /* BLSP1 QUP1 */
+		compatible = "qcom,spi-qup-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-names = "spi_physical", "spi_bam_physical";
+		reg = <0x78b5000 0x600>,
+			<0x7884000 0x1f000>;
+		interrupt-names = "spi_irq", "spi_bam_irq";
+		interrupts = <0 95 0>, <0 238 0>;
+		spi-max-frequency = <19200000>;
+		pinctrl-names = "spi_default", "spi_sleep";
+		pinctrl-0 = <&spi1_default &spi1_cs0_active>;
+		pinctrl-1 = <&spi1_sleep &spi1_cs0_sleep>;
+		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp1_qup1_spi_apps_clk>;
+		clock-names = "iface_clk", "core_clk";
+		qcom,infinite-mode = <0>;
+		qcom,use-bam;
+		qcom,use-pinctrl;
+		qcom,ver-reg-exists;
+		qcom,bam-consumer-pipe-index = <4>;
+		qcom,bam-producer-pipe-index = <5>;
+		qcom,master-id = <84>;
+		status = "disabled";
+	};
+
+	spi_2: spi@78b6000 { /* BLSP1 QUP3 */
+		compatible = "qcom,spi-qup-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-names = "spi_physical", "spi_bam_physical";
+		reg = <0x78b6000 0x600>,
+			<0x7884000 0x1f000>;
+		interrupt-names = "spi_irq", "spi_bam_irq";
+		interrupts = <0 96 0>, <0 238 0>;
+		spi-max-frequency = <19200000>;
+		pinctrl-names = "spi_default", "spi_sleep";
+		pinctrl-0 = <&spi2_default &spi2_cs0_active>;
+		pinctrl-1 = <&spi2_sleep &spi2_cs0_sleep>;
+		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp1_qup2_spi_apps_clk>;
+		clock-names = "iface_clk", "core_clk";
+		qcom,infinite-mode = <0>;
+		qcom,use-bam;
+		qcom,use-pinctrl;
+		qcom,ver-reg-exists;
+		qcom,bam-consumer-pipe-index = <6>;
+		qcom,bam-producer-pipe-index = <7>;
+		qcom,master-id = <86>;
+		status = "disabled";
+	};
+
+	spi_3: spi@78b7000 { /* BLSP1 QUP3 */
+		compatible = "qcom,spi-qup-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-names = "spi_physical", "spi_bam_physical";
+		reg = <0x78b7000 0x600>,
+			<0x7884000 0x1f000>;
+		interrupt-names = "spi_irq", "spi_bam_irq";
+		interrupts = <0 97 0>, <0 238 0>;
+		spi-max-frequency = <19200000>;
+		pinctrl-names = "spi_default", "spi_sleep";
+		pinctrl-0 = <&spi3_default &spi3_cs0_active>;
+		pinctrl-1 = <&spi3_sleep &spi3_cs0_sleep>;
+		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp1_qup3_spi_apps_clk>;
+		clock-names = "iface_clk", "core_clk";
+		qcom,infinite-mode = <0>;
+		qcom,use-bam;
+		qcom,use-pinctrl;
+		qcom,ver-reg-exists;
+		qcom,bam-consumer-pipe-index = <8>;
+		qcom,bam-producer-pipe-index = <9>;
+		qcom,master-id = <86>;
+		status = "disabled";
+	};
+
+	spi_5: spi@7af5000 { /* BLSP2 QUP1 */
+		compatible = "qcom,spi-qup-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-names = "spi_physical", "spi_bam_physical";
+		reg = <0x7af5000 0x600>,
+		      <0x7ac4000 0x1f000>;
+		interrupt-names = "spi_irq", "spi_bam_irq";
+		interrupts = <0 299 0>, <0 239 0>;
+		spi-max-frequency = <19200000>;
+		pinctrl-names = "spi_default", "spi_sleep";
+		pinctrl-0 = <&spi5_default &spi5_cs0_active>;
+		pinctrl-1 = <&spi5_sleep &spi5_cs0_sleep>;
+		clocks = <&clock_gcc clk_gcc_blsp2_ahb_clk>,
+		         <&clock_gcc clk_gcc_blsp2_qup1_spi_apps_clk>;
+		clock-names = "iface_clk", "core_clk";
+		qcom,infinite-mode = <0>;
+		qcom,use-bam;
+		qcom,use-pinctrl;
+		qcom,ver-reg-exists;
+		qcom,bam-consumer-pipe-index = <4>;
+		qcom,bam-producer-pipe-index = <5>;
+		qcom,master-id = <84>;
+		status = "disabled";
+	};
+
+	spi_7: spi@7af7000 { /* BLSP1 QUP7 */
+		compatible = "qcom,spi-qup-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-names = "spi_physical", "spi_bam_physical";
+		reg = <0x7af7000 0x600>,
+		      <0x7ac4000 0x1f000>;
+		interrupt-names = "spi_irq", "spi_bam_irq";
+		interrupts = <0 301 0>, <0 239 0>;
+		spi-max-frequency = <19200000>;
+		pinctrl-names = "spi_default", "spi_sleep";
+		pinctrl-0 = <&spi7_default &spi7_cs0_active>;
+		pinctrl-1 = <&spi7_sleep &spi7_cs0_sleep>;
+		clocks = <&clock_gcc clk_gcc_blsp2_ahb_clk>,
+		         <&clock_gcc clk_gcc_blsp2_qup3_spi_apps_clk>;
+		clock-names = "iface_clk", "core_clk";
+		qcom,infinite-mode = <0>;
+		qcom,use-bam;
+		qcom,use-pinctrl;
+		qcom,ver-reg-exists;
+		qcom,bam-consumer-pipe-index = <8>;
+		qcom,bam-producer-pipe-index = <9>;
+		qcom,master-id = <84>;
+		status = "disabled";
+	};
+
+	blsp2_uart1: serial@7aef000 {
+		compatible = "qcom,msm-lsuart-v14";
+		reg = <0x7aef000 0x200>;
+		interrupts = <0 306 0>;
+		clocks = <&clock_gcc clk_gcc_blsp2_uart1_apps_clk>,
+		         <&clock_gcc clk_gcc_blsp2_ahb_clk>;
+		clock-names = "core_clk", "iface_clk";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pmx_blsp2_uart1_active>;
+		status = "disabled";
+	};
+
+};
