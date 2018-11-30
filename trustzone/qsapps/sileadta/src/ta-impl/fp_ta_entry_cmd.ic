@@ -1,0 +1,462 @@
+/* Process command message */
+switch (cmd_id)
+{
+case TZ_FP_CMD_MODE_DOWNLOAD: {
+    rsp_ptr->status = fp_impl_download_mode(cmd_ptr->data);
+    break;
+}
+
+case TZ_FP_CMD_CAPTURE_IMG: {
+    rsp_ptr->status = fp_impl_capture_image();
+    break;
+}
+
+case TZ_FP_CMD_NAV_CAPTURE_IMG: {
+    rsp_ptr->status = fp_impl_nav_capture_image();
+    break;
+}
+
+case TZ_FP_CMD_AUTH_START: {
+    rsp_ptr->status = fp_impl_auth_start();
+    break;
+}
+
+case TZ_FP_CMD_AUTH_STEP: {
+    uint32_t fid = 0;
+    uint64_t op_id;
+    op_id = cmd_ptr->data;
+    op_id <<= 32;
+    op_id |= cmd_ptr->data2;
+    rsp_ptr->status = fp_impl_auth_step(op_id, cmd_ptr->data3, &fid);
+    rsp_ptr->data = fid;
+    break;
+}
+
+case TZ_FP_CMD_AUTH_END: {
+    rsp_ptr->status = fp_impl_auth_end();
+    break;
+}
+
+case TZ_FP_CMD_ENROLL_START: {
+    rsp_ptr->status = fp_impl_enroll_start();
+    break;
+}
+
+case TZ_FP_CMD_ENROLL_STEP: {
+    uint32_t remaining = 0;
+    rsp_ptr->status = fp_impl_enroll_step(&remaining);
+    rsp_ptr->data = remaining;
+    break;
+}
+
+case TZ_FP_CMD_ENROLL_END: {
+    uint32_t fid = cmd_ptr->data2;
+    rsp_ptr->status = fp_impl_enroll_end(cmd_ptr->data, &fid);
+    rsp_ptr->data = fid;
+    break;
+}
+
+case TZ_FP_CMD_NAV_START: {
+    rsp_ptr->status = fp_impl_nav_start();
+    break;
+}
+
+case TZ_FP_CMD_NAV_STEP: {
+    uint32_t key = 0;
+    rsp_ptr->status = fp_impl_nav_step(&key);
+    rsp_ptr->data = key;
+    break;
+}
+
+case TZ_FP_CMD_NAV_END: {
+    rsp_ptr->status = fp_impl_nav_end();
+    break;
+}
+
+case TZ_FP_CMD_NAV_SUPPORT: {
+    uint32_t type = 0;
+    rsp_ptr->status = fp_impl_nav_support(&type);
+    rsp_ptr->data = type;
+    break;
+}
+
+case TZ_FP_CMD_INIT: {
+    uint32_t chipid = 0;
+    uint32_t subid = 0;
+    uint32_t vid = 0;
+    uint32_t xml_cfg = 0;
+    rsp_ptr->status = fp_impl_init(cmd_ptr->data, cmd_ptr->data2, cmd_ptr->data3, cmd_ptr->data4, &chipid, &subid, &vid, &xml_cfg);
+    rsp_ptr->data = chipid;
+    rsp_ptr->data2 = subid;
+    rsp_ptr->data3 = ((xml_cfg ? 0x80000000 : 0) | (vid & 0x7FFFFFFF));
+    break;
+}
+
+case TZ_FP_CMD_DEINIT: {
+    rsp_ptr->status = fp_impl_deinit();
+    break;
+}
+
+case TZ_FP_CMD_SET_GID: {
+    rsp_ptr->status = fp_impl_set_gid(cmd_ptr->data, cmd_ptr->data2);
+    break;
+}
+
+case TZ_FP_CMD_LOAD_USER_DB: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_load_user_db(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_FP_REMOVE: {
+    rsp_ptr->status = fp_impl_remove_finger(cmd_ptr->data);
+    break;
+}
+
+case TZ_FP_CMD_GET_DB_COUNT: {
+    rsp_ptr->status = fp_impl_get_db_count();
+    break;
+}
+
+case TZ_FP_CMD_GET_FINGERPRINTS: {
+    uint32_t count = cmd_ptr->len/sizeof(uint32_t);
+    MAP_SHARED_BUFFER(ptr);
+    count = fp_impl_get_finger_prints((uint32_t *)(long)ptr, count);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = count;
+    rsp_ptr->status = count;
+
+    break;
+}
+
+case TZ_FP_CMD_LOAD_ENROLL_CHALLENGE: {
+    int64_t challeng = fp_impl_load_enroll_challenge();
+    rsp_ptr->data = (uint32_t)(challeng >> 32);
+    rsp_ptr->data2 = (uint32_t)challeng;
+    rsp_ptr->status = SL_SUCCESS;
+    break;
+}
+
+case TZ_FP_CMD_SET_ENROLL_CHALLENGE: {
+    int64_t challeng;
+    challeng = cmd_ptr->data;
+    challeng <<= 32;
+    challeng |= cmd_ptr->data2;
+    rsp_ptr->status = fp_impl_set_enroll_challenge(challeng);
+    break;
+}
+
+case TZ_FP_CMD_VERIFY_ENROLL_CHALLENGE: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_verify_enroll_challenge(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_LOAD_AUTH_ID: {
+    int64_t id = fp_impl_load_auth_id();
+    rsp_ptr->data = (uint32_t)(id >> 32);
+    rsp_ptr->data2 = (uint32_t)id;
+    rsp_ptr->status = SL_SUCCESS;
+    break;
+}
+
+case TZ_FP_CMD_GET_AUTH_OBJ: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_get_hw_auth_obj(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_SET_NAV_TYPE: {
+    rsp_ptr->status = fp_impl_nav_set_type(cmd_ptr->data);
+    break;
+}
+
+case TZ_FP_CMD_GET_FINGER_STATUS: {
+    uint32_t status = 0;
+    uint32_t addition = 0;
+    rsp_ptr->status = fp_impl_get_finger_status(&status, &addition);
+    rsp_ptr->data = status;
+    rsp_ptr->data2 = addition;
+    break;
+}
+
+case TZ_FP_CMD_GET_VERSIONS: {
+    uint32_t algoVer = 0;
+    uint32_t taVer = 0;
+    rsp_ptr->status = fp_impl_get_version(&algoVer, &taVer);
+    rsp_ptr->data = algoVer;
+    rsp_ptr->data2 = taVer;
+    break;
+}
+
+case TZ_FP_CMD_GET_CHIPID: {
+    uint32_t chipid = 0;
+    uint32_t subid = 0;
+    rsp_ptr->status = fp_impl_getchip(&chipid, &subid);
+    rsp_ptr->data = chipid;
+    rsp_ptr->data2 = subid;
+    break;
+}
+
+case TZ_FP_CMD_TEST_IMAGE_CAPTURE: {
+    uint32_t data = 0;
+    uint32_t data2 = 0;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_test_image_capture(cmd_ptr->data, ptr, cmd_ptr->len, &data, &data2);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = data;
+    rsp_ptr->data2 = data2;
+    break;
+}
+
+case TZ_FP_CMD_TEST_SEND_GP_IMG: {
+    uint32_t len = cmd_ptr->len;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_test_frrfar_send_group_image(cmd_ptr->data, ptr, &len);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    break;
+}
+
+case TZ_FP_CMD_TEST_IMAGE_FINISH: {
+    rsp_ptr->status = fp_impl_test_image_finish();
+    break;
+}
+
+case TZ_FP_CMD_TEST_DEADPX: {
+    uint8_t result = 1;
+    uint32_t deadpx = 0;
+    uint32_t badline = 0;
+    rsp_ptr->status= fp_impl_test_deadpx(&result, &deadpx, &badline);
+    rsp_ptr->data  = result;
+    rsp_ptr->data2 = deadpx;
+    rsp_ptr->data3 = badline;
+    break;
+}
+
+case TZ_FP_CMD_TEST_GET_IMG_INFO: {
+    uint32_t w = 0;
+    uint32_t h = 0;
+    uint32_t size = 0;
+    rsp_ptr->status = fp_impl_test_get_image_info(&w, &h, &size);
+    rsp_ptr->data = w;
+    rsp_ptr->data2 = h;
+    rsp_ptr->data3 = size;
+    break;
+}
+
+case TZ_FP_CMD_SET_KEY_DATA: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_set_key_data(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_INIT_UNK_0: {
+    uint32_t id = 0;
+    rsp_ptr->data = fp_impl_unk0_init(&id);
+    rsp_ptr->data2 = id;
+    rsp_ptr->status = SL_SUCCESS;
+    break;
+}
+
+case TZ_FP_CMD_INIT_UNK_1: {
+    rsp_ptr->status = fp_impl_unk1_init((void *)(cmd_ptr->v_addr), cmd_ptr->len);
+    break;
+}
+
+case TZ_FP_CMD_DEINIT_UNK_1: {
+    rsp_ptr->status = fp_impl_unk1_deinit();
+    break;
+}
+
+case TZ_FP_CMD_INIT_UNK_2: {
+    rsp_ptr->status = fp_impl_unk2_init((void *)(cmd_ptr->v_addr), cmd_ptr->len);
+    break;
+}
+
+case TZ_FP_CMD_DEINIT_UNK_2: {
+    rsp_ptr->status = fp_impl_unk2_deinit();
+    break;
+}
+
+case TZ_FP_CMD_CALIBRATE: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_calibrate(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_CALIBRATE2: {
+    rsp_ptr->status = fp_impl_calibrate2();
+    break;
+}
+
+case TZ_FP_CMD_CHECK_ESD: {
+    rsp_ptr->status = fp_impl_check_esd();
+    break;
+}
+
+case TZ_FP_CMD_GET_OTP: {
+    uint32_t otp[3] = {0};
+    rsp_ptr->status = fp_impl_get_otp(otp);
+    rsp_ptr->data = otp[0];
+    rsp_ptr->data2 = otp[1];
+    rsp_ptr->data3 = otp[2];
+    break;
+}
+
+case TZ_FP_CMD_CALIBRATE_OPTIC: {
+    uint32_t len = cmd_ptr->len;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_optic_calibrate(cmd_ptr->data, ptr, &len);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    break;
+}
+
+case TZ_FP_CMD_GET_CONFIG: {
+    uint32_t len = cmd_ptr->len;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_get_config(ptr, &len);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    break;
+}
+
+case TZ_FP_CMD_GET_ENROLL_NUM: {
+    uint32_t num = 0;
+    rsp_ptr->status = fp_impl_get_enroll_num(&num);
+    rsp_ptr->data = num;
+    break;
+}
+
+case TZ_FP_CMD_CI_CHK_FINGER: {
+    rsp_ptr->status = fp_impl_ci_chk_finger();
+    break;
+}
+
+case TZ_FP_CMD_CI_ADJ_GAIN: {
+    rsp_ptr->status = fp_impl_ci_adj_gain(cmd_ptr->data);
+    break;
+}
+
+case TZ_FP_CMD_CI_SHOT: {
+    rsp_ptr->status = fp_impl_ci_shot(cmd_ptr->data);
+    break;
+}
+
+case TZ_FP_CMD_SET_ALG_PARAM: {
+    uint32_t len = cmd_ptr->len;
+    uint32_t result = 0;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_algo_set_param(cmd_ptr->data, (uint8_t *)ptr, &len, &result);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    rsp_ptr->data2 = result;
+    break;
+}
+
+case TZ_FP_CMD_SET_SPI_DEV: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_set_spi_dev(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_UPDATE_CFG: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_update_cfg(ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_INIT2: {
+    uint32_t feature = 0;
+    uint32_t tpl_size = 0;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_init2(ptr, cmd_ptr->len, &feature, &tpl_size);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = feature;
+    rsp_ptr->data2 = tpl_size;
+    break;
+}
+
+case TZ_FP_CMD_LOAD_TEMPLATE: {
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_load_template(cmd_ptr->data, ptr, cmd_ptr->len);
+    UNMAP_SHARED_BUFFER(ptr);
+    break;
+}
+
+case TZ_FP_CMD_SAVE_TEMPLATE: {
+    uint32_t len = cmd_ptr->len;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_save_template(ptr, &len);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    break;
+}
+
+case TZ_FP_CMD_UPDATE_TEMPLATE: {
+    uint32_t fid = 0;
+    uint32_t len = cmd_ptr->len;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_update_template(ptr, &len, &fid);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    rsp_ptr->data2 = fid;
+    break;
+}
+
+case TZ_FP_CMD_SET_LOG_MODE: {
+    rsp_ptr->status = fp_impl_set_log_mode((uint8_t)cmd_ptr->data, (uint8_t)cmd_ptr->data2);
+    break;
+}
+
+case TZ_FP_CMD_TEST_DUMP_DATA: {
+    uint32_t size = 0;
+    uint32_t info = 0;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_test_dump_data(cmd_ptr->data, ptr, cmd_ptr->len, &size, &info);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = size;
+    rsp_ptr->data2 = info;
+    break;
+}
+
+case TZ_FP_CMD_TEST_SPEED: {
+    uint32_t len = cmd_ptr->len;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_test_speed(ptr, &len);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    break;
+}
+
+case TZ_FP_CMD_TEST_CMD: {
+    uint32_t len = cmd_ptr->len;
+    uint32_t result = 0;
+    MAP_SHARED_BUFFER(ptr);
+    rsp_ptr->status = fp_impl_test_cmd(cmd_ptr->data, (uint8_t *)ptr, &len, &result);
+    UNMAP_SHARED_BUFFER(ptr);
+    rsp_ptr->data = len;
+    rsp_ptr->data2 = result;
+    break;
+}
+case TZ_FP_CMD_GET_PARAM: {
+    uint32_t param1 = 0;
+    uint32_t param2 = 0;
+    rsp_ptr->status = fp_impl_get_ta_param(cmd_ptr->data, &param1, &param2);
+    rsp_ptr->data = param1;
+    rsp_ptr->data2 = param2;
+    break;
+}
+default:
+    rsp_ptr->status = -SL_ERROR_REQ_CMD_UNSUPPORT;
+    LOG_MSG_DEBUG("Unsupported command: %d.  Test not yet implemented or commnented out.", cmd_id);
+    break;
+}
